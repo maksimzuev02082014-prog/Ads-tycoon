@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1a1a2e">
+<title>Реклама Тайкун</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: 'Segoe UI', -apple-system, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+    min-height: 100vh;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 12px;
+  }
+  .container {
+    width: 100%;
+    max-width: 700px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 16px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 12px;
+    font-size: 22px;
+    background: linear-gradient(90deg, #f39c12, #e74c3c, #9b59b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .stat {
+    background: rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 8px 4px;
+    text-align: center;
+    font-size: 11px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .stat .icon { font-size: 18px; display: block; margin-bottom: 3px; }
+  .stat .val { font-weight: bold; font-size: 13px; color: #f1c40f; }
+  .player {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #000;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  video { width: 100%; height: 100%; border-radius: 12px; object-fit: contain; }
+  .placeholder { text-align: center; color: #888; padding: 20px; font-size: 14px; }
+  .placeholder .big { font-size: 44px; margin-bottom: 8px; }
+  .progress-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    transition: width 0.1s linear;
+  }
+  .status { text-align: center; font-size: 13px; color: #aaa; margin-bottom: 12px; min-height: 20px; }
+  .btn {
+    width: 100%;
+    padding: 18px;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  .btn:active:not(:disabled) { transform: scale(0.97); }
+  .btn-main {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    box-shadow: 0 5px 15px rgba(231,76,60,0.4);
+  }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .row .btn { margin-bottom: 0; padding: 15px; font-size: 15px; }
+  .btn-secondary { background: linear-gradient(135deg, #3498db, #2980b9); }
+  .btn-withdraw { background: linear-gradient(135deg, #f39c12, #d68910); }
+  .modal {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    z-index: 100;
+  }
+  .modal.open { display: flex; }
+  .modal-box {
+    background: #1e2a47;
+    padding: 18px;
+    border-radius: 16px;
+    max-width: 420px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .modal-box h2 { text-align: center; margin-bottom: 12px; font-size: 18px; }
+  .shop-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    border: 1px solid transparent;
+  }
+  .shop-item:active { background: rgba(255,255,255,0.15); }
+  .shop-item.owned { opacity: 0.5; border-color: #2ecc71; cursor: default; }
+  .shop-item .price { color: #f1c40f; font-weight: bold; }
+  .close-btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background: #e74c3c;
+    color: #fff;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  textarea {
+    width: 100%;
+    height: 160px;
+    background: #0f1623;
+    color: #2ecc71;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 11px;
+    resize: none;
+    margin-top: 10px;
+    word-break: break-all;
+  }
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #2ecc71;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    transition: transform 0.3s;
+    z-index: 200;
+    max-width: 90%;
+    text-align: center;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error { background: #e74c3c; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>📺 Реклама Тайкун</h1>
+
+  <div class="stats">
+    <div class="stat"><span class="icon">📺</span><span class="val" id="s-ads">0</span></div>
+    <div class="stat"><span class="icon">🪙</span><span class="val" id="s-coins">0.00</span></div>
+    <div class="stat"><span class="icon">🔋</span><span class="val" id="s-energy">50/50</span></div>
+    <div class="stat"><span class="icon">🌐</span><span class="val" id="s-speed">1</span></div>
+  </div>
+
+  <div class="player" id="player">
+    <div class="placeholder">
+      <div class="big">🎬</div>
+      <div>Нажми "Смотреть рекламу"</div>
+    </div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+  <div class="status" id="status">Готов к просмотру</div>
+
+  <button class="btn btn-main" id="watchBtn" onclick="watchAd()">▶ Смотреть рекламу</button>
+
+  <div class="row">
+    <button class="btn btn-secondary" onclick="openShop()">🛒 Магазин</button>
+    <button class="btn btn-withdraw" onclick="openWithdraw()">💸 Вывести</button>
+  </div>
+</div>
+
+<div class="modal" id="shopModal">
+  <div class="modal-box">
+    <h2>🌐 Улучшение интернета</h2>
+    <div id="shopList"></div>
+    <button class="close-btn" onclick="closeModal('shopModal')">Закрыть</button>
+  </div>
+</div>
+
+<div class="modal" id="withdrawModal">
+  <div class="modal-box">
+    <h2>💸 Вывод средств</h2>
+    <p style="font-size:13px;color:#aaa;margin-bottom:10px">
+      Скопируй код и отправь админу. В нём зашифрованы твои данные и сумма.
+    </p>
+    <button class="btn btn-withdraw" onclick="generateWithdraw()">🔐 Сгенерировать код</button>
+    <textarea id="withdrawCode" readonly placeholder="Код появится здесь..."></textarea>
+    <button class="close-btn" onclick="closeModal('withdrawModal')">Закрыть</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================
+// ⚠️ ВПИШИ СВОИ НАЗВАНИЯ ВИДЕО ЗДЕСЬ (одна строка на файл)
+// ============================================
+const AD_FILES = [
+  "ad1.mp4",
+  "ad2.mp4",
+  "ad3.mp4"
+];
+// ============================================
+
+// ===== СОСТОЯНИЕ =====
+const DEFAULT_STATE = {
+  adsWatched: 0, coins: 0, energy: 50, maxEnergy: 50,
+  speed: 1, lastEnergyUse: 0, ownedSpeeds: [1]
+};
+let state = loadState();
+let watching = false;
+
+const SHOP = [
+  { speed: 2, price: 3 },
+  { speed: 4, price: 8 },
+  { speed: 10, price: 20 },
+  { speed: 50, price: 90 },
+  { speed: 100, price: 250 }
+];
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('adTycoonSave');
+    if (!raw) return { ...DEFAULT_STATE };
+    return { ...DEFAULT_STATE, ...JSON.parse(raw) };
+  } catch { return { ...DEFAULT_STATE }; }
+}
+function saveState() { localStorage.setItem('adTycoonSave', JSON.stringify(state)); }
+
+function checkEnergyRegen() {
+  if (state.energy < state.maxEnergy && state.lastEnergyUse > 0) {
+    if (Date.now() - state.lastEnergyUse >= 2 * 60 * 60 * 1000) {
+      state.energy = state.maxEnergy;
+      state.lastEnergyUse = 0;
+      saveState();
+    }
+  }
+}
+function updateUI() {
+  checkEnergyRegen();
+  document.getElementById('s-ads').textContent = state.adsWatched;
+  document.getElementById('s-coins').textContent = state.coins.toFixed(2);
+  document.getElementById('s-energy').textContent = state.energy + '/' + state.maxEnergy;
+  document.getElementById('s-speed').textContent = state.speed;
+  saveState();
+}
+setInterval(updateUI, 1000);
+
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => t.className = 'toast', 2500);
+}
+
+// ===== СЛУЧАЙНОЕ ВИДЕО + АВТО-РАЗМЕР =====
+async function getRandomAdWithSize() {
+  if (AD_FILES.length === 0) return null;
+  const file = AD_FILES[Math.floor(Math.random() * AD_FILES.length)];
+  const url = 'ads/' + file;
+  let size = 1000; // КБ по умолчанию, если не удалось узнать
+  try {
+    const res = await fetch(url, { method: 'HEAD', cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const len = res.headers.get('Content-Length');
+    if (len) size = Math.max(1, Math.round(parseInt(len) / 1024));
+  } catch (e) {
+    console.warn('Не удалось получить размер', file, e);
+  }
+  return { file, url, size };
+}
+
+// ===== ПРОСМОТР РЕКЛАМЫ =====
+async function watchAd() {
+  if (watching) return;
+  if (state.energy <= 0) { showToast('Нет энергии! Восстановление через 2 часа.', true); return; }
+  if (AD_FILES.length === 0) { showToast('Нет видео в списке AD_FILES', true); return; }
+
+  watching = true;
+  document.getElementById('watchBtn').disabled = true;
+
+  // Списываем энергию
+  state.energy--;
+  if (state.lastEnergyUse === 0) state.lastEnergyUse = Date.now();
+  updateUI();
+
+  const statusEl = document.getElementById('status');
+  const playerEl = document.getElementById('player');
+  const progressEl = document.getElementById('progress');
+
+  // 1. Выбираем случайный ролик и узнаём его размер
+  statusEl.textContent = '🎲 Выбираю ролик...';
+  const ad = await getRandomAdWithSize();
+  if (!ad) {
+    statusEl.textContent = '⚠ Не удалось выбрать ролик';
+    watching = false;
+    document.getElementById('watchBtn').disabled = false;
+    return;
+  }
+
+  // 2. Считаем время загрузки (1 Мбит/с = 125 КБ/с)
+  const speedKbps = state.speed * 125;
+  const loadMs = Math.max(500, (ad.size / speedKbps) * 1000);
+  const loadSec = (loadMs / 1000).toFixed(1);
+
+  statusEl.textContent =
+    `🌐 ${ad.file} (${ad.size} КБ) — загрузка ${loadSec} сек при ${state.speed} Мбит/с...`;
+  progressEl.style.width = '0%';
+
+  // 3. Фейковая загрузка
+  const startTime = Date.now();
+  await new Promise(resolve => {
+    const interval = setInterval(() => {
+      const pct = Math.min(100, ((Date.now() - startTime) / loadMs) * 100);
+      progressEl.style.width = pct + '%';
+      if (pct >= 100) { clearInterval(interval); resolve(); }
+    }, 50);
+  });
+
+  // 4. Воспроизведение
+  statusEl.textContent = `▶ Показ: ${ad.file}`;
+  playerEl.innerHTML = `<video id="adVideo" autoplay playsinline webkit-playsinline></video>`;
+  const vid = document.getElementById('adVideo');
+  vid.src = ad.url;
+
+  await new Promise(resolve => {
+    let done = false;
+    const finish = () => { if (!done) { done = true; resolve(); } };
+
+    vid.onloadedmetadata = () => {
+      if (vid.duration > 15) vid.playbackRate = vid.duration / 15;
+    };
+    vid.onended = finish;
+    vid.onerror = () => {
+      statusEl.textContent = `⚠ Видео ${ad.file} не найдено, имитация...`;
+      setTimeout(finish, 3000);
+    };
+    vid.play().catch(() => {
+      statusEl.textContent = '▶ Нажми на видео для запуска';
+      vid.onclick = () => vid.play();
+    });
+
+    // Страховка от зависания
+    setTimeout(finish, 60000);
+  });
+
+  // 5. Награда
+  const reward = +(0.1 + Math.random() * 0.2).toFixed(2);
+  state.coins = +(state.coins + reward).toFixed(2);
+  state.adsWatched++;
+  updateUI();
+
+  progressEl.style.width = '100%';
+  statusEl.textContent = `✅ +${reward.toFixed(2)} 🪙 (${ad.file}, ${ad.size} КБ)`;
+  playerEl.innerHTML = `
+    <div class="placeholder">
+      <div class="big">🎉</div>
+      <div>+${reward.toFixed(2)} 🪙</div>
+      <div style="font-size:11px;color:#666;margin-top:6px">${ad.file}</div>
+    </div>`;
+
+  watching = false;
+  document.getElementById('watchBtn').disabled = false;
+  setTimeout(() => { progressEl.style.width = '0%'; }, 1000);
+}
+
+// ===== МАГАЗИН =====
+function openShop() { renderShop(); document.getElementById('shopModal').classList.add('open'); }
+function renderShop() {
+  const list = document.getElementById('shopList');
+  list.innerHTML = '';
+  SHOP.forEach(item => {
+    const owned = state.ownedSpeeds.includes(item.speed);
+    const div = document.createElement('div');
+    div.className = 'shop-item' + (owned ? ' owned' : '');
+    div.innerHTML = `<span>🌐 ${item.speed} Мбит/с</span>
+      <span class="price">${owned ? '✔ Куплено' : item.price + ' 🪙'}</span>`;
+    if (!owned) div.onclick = () => buySpeed(item);
+    list.appendChild(div);
+  });
+}
+function buySpeed(item) {
+  if (state.coins < item.price) { showToast('Недостаточно монет!', true); return; }
+  state.coins = +(state.coins - item.price).toFixed(2);
+  state.speed = Math.max(state.speed, item.speed);
+  if (!state.ownedSpeeds.includes(item.speed)) state.ownedSpeeds.push(item.speed);
+  updateUI(); renderShop();
+  showToast(`Куплено: ${item.speed} Мбит/с!`);
+}
+
+// ===== ВЫВОД =====
+function openWithdraw() {
+  document.getElementById('withdrawModal').classList.add('open');
+  document.getElementById('withdrawCode').value = '';
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+const SECRET_KEY = "ADTYCOON_2024_SECRET_X9Z";
+function xorCipher(str, key) {
+  let out = '';
+  for (let i = 0; i < str.length; i++)
+    out += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+  return out;
+}
+function generateWithdraw() {
+  if (state.coins < 0.1) { showToast('Минимум для вывода: 0.10 🪙', true); return; }
+  const payload = {
+    v: 1, coins: +state.coins.toFixed(2), ads: state.adsWatched,
+    speed: state.speed, ts: Date.now(),
+    rnd: Math.random().toString(36).slice(2, 10)
+  };
+  const json = JSON.stringify(payload);
+  const b64_1 = btoa(unescape(encodeURIComponent(json)));
+  const xored = xorCipher(b64_1, SECRET_KEY);
+  const b64_2 = btoa(unescape(encodeURIComponent(xored)));
+  const mid = Math.ceil(b64_2.length / 2);
+  const shuffled = b64_2.slice(mid) + b64_2.slice(0, mid);
+  document.getElementById('withdrawCode').value =
+    'ADT-' + btoa(unescape(encodeURIComponent(shuffled)));
+  showToast('Код создан!');
+}
+
+// ===== СТАРТ =====
+updateUI();
+document.getElementById('status').textContent = `Готово: ${AD_FILES.length} роликов в списке`;
+</script>
+</body>
+</html>
