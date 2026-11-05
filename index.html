@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+фффффффффффффффффффффф<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -250,7 +250,7 @@ const DEFAULT_STATE = {
 
 let state = loadState();
 let watching = false;
-let AD_VIDEOS = []; // заполнится автоматически
+let AD_VIDEOS = [];
 
 const SHOP = [
   { speed: 2,   price: 3 },
@@ -294,7 +294,6 @@ async function loadVideoList() {
     statusEl.textContent = `✅ Загружено роликов: ${videos.length}`;
     document.getElementById('watchBtn').disabled = false;
   } catch (e) {
-    // Резервный список на случай, если API недоступен
     AD_VIDEOS = [
       `${AD_FOLDER}/ad1.mp4`,
       `${AD_FOLDER}/ad2.mp4`,
@@ -384,30 +383,65 @@ async function watchAd() {
   playerEl.innerHTML = `<video id="adVideo" autoplay playsinline></video>`;
   const vid = document.getElementById('adVideo');
 
+  let adDuration = 0; // длительность ролика в секундах
+
   await new Promise(resolve => {
-    vid.src = videoUrl;
-    vid.onloadedmetadata = () => {
-      if (vid.duration > 15) vid.playbackRate = vid.duration / 15;
+    let fallbackTimer = null;
+    let hardTimer = null;
+
+    const cleanup = () => {
+      if (fallbackTimer) clearTimeout(fallbackTimer);
+      if (hardTimer) clearTimeout(hardTimer);
     };
-    vid.onended = resolve;
+
+    vid.onloadedmetadata = () => {
+      adDuration = vid.duration || 0;
+      // Ускорения нет — видео играет в оригинальной длине
+      // Резервный таймер: duration + 10 сек
+      fallbackTimer = setTimeout(() => {
+        if (!vid.ended) { cleanup(); resolve(); }
+      }, (adDuration + 10) * 1000);
+    };
+
+    vid.onended = () => { cleanup(); resolve(); };
     vid.onerror = () => {
       statusEl.textContent = '⚠ Видео не найдено, имитация показа...';
+      cleanup();
       setTimeout(resolve, 3000);
     };
-    setTimeout(() => { if (!vid.ended) resolve(); }, 30000);
+
+    // Жёсткий лимит на случай, если метаданные не придут вообще
+    hardTimer = setTimeout(() => {
+      if (!vid.ended) { cleanup(); resolve(); }
+    }, 5 * 60 * 1000);
+
+    vid.src = videoUrl;
   });
 
-  const reward = +(0.1 + Math.random() * 0.2).toFixed(2);
+  // Базовая награда
+  let reward = +(0.1 + Math.random() * 0.2).toFixed(2);
+  let bonusApplied = false;
+
+  // Бонус ×1.5 за ролик дольше 45 секунд
+  if (adDuration > 45) {
+    reward = +(reward * 1.5).toFixed(2);
+    bonusApplied = true;
+  }
+
   state.coins = +(state.coins + reward).toFixed(2);
   state.adsWatched++;
   updateUI();
 
   progressEl.style.width = '100%';
-  statusEl.textContent = `✅ Просмотрено! Награда: +${reward.toFixed(2)} 🪙`;
+  if (bonusApplied) {
+    statusEl.textContent = `✅ Просмотрено ${Math.round(adDuration)} сек! Бонус ×1.5: +${reward.toFixed(2)} 🪙`;
+  } else {
+    statusEl.textContent = `✅ Просмотрено! Награда: +${reward.toFixed(2)} 🪙`;
+  }
   playerEl.innerHTML = `
     <div class="placeholder">
-      <div class="big">🎉</div>
-      <div>+${reward.toFixed(2)} 🪙</div>
+      <div class="big">${bonusApplied ? '🔥' : '🎉'}</div>
+      <div>+${reward.toFixed(2)} 🪙${bonusApplied ? ' (×1.5)' : ''}</div>
     </div>`;
 
   watching = false;
