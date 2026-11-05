@@ -4,55 +4,53 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#1a1a2e">
 <title>Реклама Тайкун</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
   body {
-    font-family: 'Segoe UI', -apple-system, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
     min-height: 100vh;
     color: #fff;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 12px;
+    padding: 20px;
   }
   .container {
     width: 100%;
     max-width: 700px;
     background: rgba(255,255,255,0.05);
     border-radius: 20px;
-    padding: 16px;
+    padding: 20px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255,255,255,0.1);
     box-shadow: 0 10px 40px rgba(0,0,0,0.5);
   }
   h1 {
     text-align: center;
-    margin-bottom: 12px;
-    font-size: 22px;
+    margin-bottom: 15px;
+    font-size: 26px;
     background: linear-gradient(90deg, #f39c12, #e74c3c, #9b59b6);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
   .stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-    margin-bottom: 12px;
+    gap: 8px;
+    margin-bottom: 15px;
   }
   .stat {
     background: rgba(255,255,255,0.08);
     border-radius: 12px;
-    padding: 8px 4px;
+    padding: 10px 6px;
     text-align: center;
-    font-size: 11px;
+    font-size: 13px;
     border: 1px solid rgba(255,255,255,0.1);
   }
-  .stat .icon { font-size: 18px; display: block; margin-bottom: 3px; }
-  .stat .val { font-weight: bold; font-size: 13px; color: #f1c40f; }
+  .stat .icon { font-size: 20px; display: block; margin-bottom: 4px; }
+  .stat .val { font-weight: bold; font-size: 15px; color: #f1c40f; }
   .player {
     width: 100%;
     aspect-ratio: 16/9;
@@ -65,15 +63,15 @@
     position: relative;
     overflow: hidden;
   }
-  video { width: 100%; height: 100%; border-radius: 12px; object-fit: contain; }
-  .placeholder { text-align: center; color: #888; padding: 20px; font-size: 14px; }
-  .placeholder .big { font-size: 44px; margin-bottom: 8px; }
+  video { width: 100%; height: 100%; border-radius: 12px; }
+  .placeholder { text-align: center; color: #666; padding: 20px; }
+  .placeholder .big { font-size: 50px; margin-bottom: 10px; }
   .progress-bar {
     height: 8px;
     background: rgba(255,255,255,0.1);
     border-radius: 10px;
     overflow: hidden;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
   .progress-fill {
     height: 100%;
@@ -81,7 +79,7 @@
     background: linear-gradient(90deg, #3498db, #2ecc71);
     transition: width 0.1s linear;
   }
-  .status { text-align: center; font-size: 13px; color: #aaa; margin-bottom: 12px; min-height: 20px; }
+  .status { text-align: center; font-size: 13px; color: #aaa; margin-bottom: 12px; min-height: 18px; }
   .btn {
     width: 100%;
     padding: 18px;
@@ -90,18 +88,17 @@
     font-size: 17px;
     font-weight: bold;
     cursor: pointer;
-    transition: transform 0.1s;
+    transition: all 0.2s;
     color: #fff;
     margin-bottom: 10px;
   }
-  .btn:active:not(:disabled) { transform: scale(0.97); }
+  .btn:active { transform: scale(0.97); }
   .btn-main {
     background: linear-gradient(135deg, #e74c3c, #c0392b);
     box-shadow: 0 5px 15px rgba(231,76,60,0.4);
   }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-  .row .btn { margin-bottom: 0; padding: 15px; font-size: 15px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .btn-secondary { background: linear-gradient(135deg, #3498db, #2980b9); }
   .btn-withdraw { background: linear-gradient(135deg, #f39c12, #d68910); }
   .modal {
@@ -110,51 +107,51 @@
     display: none;
     justify-content: center;
     align-items: center;
-    padding: 16px;
+    padding: 20px;
     z-index: 100;
   }
   .modal.open { display: flex; }
   .modal-box {
     background: #1e2a47;
-    padding: 18px;
+    padding: 20px;
     border-radius: 16px;
-    max-width: 420px;
+    max-width: 400px;
     width: 100%;
     max-height: 85vh;
     overflow-y: auto;
     border: 1px solid rgba(255,255,255,0.15);
   }
-  .modal-box h2 { text-align: center; margin-bottom: 12px; font-size: 18px; }
+  .modal-box h2 { text-align: center; margin-bottom: 15px; font-size: 20px; }
   .shop-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 14px;
+    padding: 15px;
     background: rgba(255,255,255,0.06);
     border-radius: 10px;
     margin-bottom: 8px;
     cursor: pointer;
-    font-size: 15px;
+    transition: all 0.2s;
     border: 1px solid transparent;
+    font-size: 15px;
   }
-  .shop-item:active { background: rgba(255,255,255,0.15); }
+  .shop-item:hover { background: rgba(255,255,255,0.12); }
   .shop-item.owned { opacity: 0.5; border-color: #2ecc71; cursor: default; }
   .shop-item .price { color: #f1c40f; font-weight: bold; }
   .close-btn {
     width: 100%;
-    padding: 15px;
+    padding: 12px;
     border: none;
     border-radius: 10px;
     background: #e74c3c;
     color: #fff;
     font-weight: bold;
-    font-size: 15px;
     cursor: pointer;
     margin-top: 10px;
   }
   textarea {
     width: 100%;
-    height: 160px;
+    height: 180px;
     background: #0f1623;
     color: #2ecc71;
     border: 1px solid rgba(255,255,255,0.15);
@@ -164,7 +161,6 @@
     font-size: 11px;
     resize: none;
     margin-top: 10px;
-    word-break: break-all;
   }
   .toast {
     position: fixed;
@@ -173,14 +169,11 @@
     transform: translateX(-50%) translateY(100px);
     background: #2ecc71;
     color: #fff;
-    padding: 12px 20px;
+    padding: 12px 24px;
     border-radius: 10px;
     font-weight: bold;
-    font-size: 14px;
     transition: transform 0.3s;
     z-index: 200;
-    max-width: 90%;
-    text-align: center;
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
   .toast.error { background: #e74c3c; }
@@ -205,9 +198,9 @@
   </div>
 
   <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
-  <div class="status" id="status">Готов к просмотру</div>
+  <div class="status" id="status">Загрузка списка видео...</div>
 
-  <button class="btn btn-main" id="watchBtn" onclick="watchAd()">▶ Смотреть рекламу</button>
+  <button class="btn btn-main" id="watchBtn" onclick="watchAd()" disabled>▶ Смотреть рекламу</button>
 
   <div class="row">
     <button class="btn btn-secondary" onclick="openShop()">🛒 Магазин</button>
@@ -227,7 +220,7 @@
   <div class="modal-box">
     <h2>💸 Вывод средств</h2>
     <p style="font-size:13px;color:#aaa;margin-bottom:10px">
-      Скопируй код и отправь админу. В нём зашифрованы твои данные и сумма.
+      Скопируй код ниже и отправь админу. В нём зашифрованы твои данные и сумма вывода.
     </p>
     <button class="btn btn-withdraw" onclick="generateWithdraw()">🔐 Сгенерировать код</button>
     <textarea id="withdrawCode" readonly placeholder="Код появится здесь..."></textarea>
@@ -238,29 +231,32 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ============================================
-// ⚠️ ВПИШИ СВОИ НАЗВАНИЯ ВИДЕО ЗДЕСЬ (одна строка на файл)
-// ============================================
-const AD_FILES = [
-  "ad1.mp4",
-  "ad2.mp4",
-  "ad3.mp4"
-];
-// ============================================
+// ===== НАСТРОЙКИ РЕПОЗИТОРИЯ =====
+const GITHUB_USER = "maksimzuev02082014-prog";
+const GITHUB_REPO = "Ads-tycoon";
+const GITHUB_BRANCH = "main";      // если у тебя ветка master — поменяй на "master"
+const AD_FOLDER = "ad";            // имя папки с видео
 
 // ===== СОСТОЯНИЕ =====
 const DEFAULT_STATE = {
-  adsWatched: 0, coins: 0, energy: 50, maxEnergy: 50,
-  speed: 1, lastEnergyUse: 0, ownedSpeeds: [1]
+  adsWatched: 0,
+  coins: 0,
+  energy: 50,
+  maxEnergy: 50,
+  speed: 1,
+  lastEnergyUse: 0,
+  ownedSpeeds: [1]
 };
+
 let state = loadState();
 let watching = false;
+let AD_VIDEOS = []; // заполнится автоматически
 
 const SHOP = [
-  { speed: 2, price: 3 },
-  { speed: 4, price: 8 },
-  { speed: 10, price: 20 },
-  { speed: 50, price: 90 },
+  { speed: 2,   price: 3 },
+  { speed: 4,   price: 8 },
+  { speed: 10,  price: 20 },
+  { speed: 50,  price: 90 },
   { speed: 100, price: 250 }
 ];
 
@@ -271,17 +267,57 @@ function loadState() {
     return { ...DEFAULT_STATE, ...JSON.parse(raw) };
   } catch { return { ...DEFAULT_STATE }; }
 }
-function saveState() { localStorage.setItem('adTycoonSave', JSON.stringify(state)); }
+function saveState() {
+  localStorage.setItem('adTycoonSave', JSON.stringify(state));
+}
 
+// ===== АВТОЗАГРУЗКА СПИСКА ВИДЕО ЧЕРЕЗ GITHUB API =====
+async function loadVideoList() {
+  const statusEl = document.getElementById('status');
+  const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${AD_FOLDER}?ref=${GITHUB_BRANCH}`;
+
+  try {
+    const res = await fetch(apiUrl, { headers: { 'Accept': 'application/vnd.github+json' } });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+
+    const files = await res.json();
+    const videos = files
+      .filter(f => f.type === 'file' && /\.(mp4|webm|ogg|m4v)$/i.test(f.name))
+      .map(f => f.download_url);
+
+    if (videos.length === 0) {
+      statusEl.textContent = '⚠ В папке ad нет видеофайлов';
+      return;
+    }
+
+    AD_VIDEOS = videos;
+    statusEl.textContent = `✅ Загружено роликов: ${videos.length}`;
+    document.getElementById('watchBtn').disabled = false;
+  } catch (e) {
+    // Резервный список на случай, если API недоступен
+    AD_VIDEOS = [
+      `${AD_FOLDER}/ad1.mp4`,
+      `${AD_FOLDER}/ad2.mp4`,
+      `${AD_FOLDER}/ad3.mp4`
+    ];
+    statusEl.textContent = '⚠ Список не получен, используется резервный.';
+    document.getElementById('watchBtn').disabled = false;
+  }
+}
+
+// ===== ЭНЕРГИЯ =====
 function checkEnergyRegen() {
   if (state.energy < state.maxEnergy && state.lastEnergyUse > 0) {
-    if (Date.now() - state.lastEnergyUse >= 2 * 60 * 60 * 1000) {
+    const elapsed = Date.now() - state.lastEnergyUse;
+    const TWO_HOURS = 2 * 60 * 60 * 1000;
+    if (elapsed >= TWO_HOURS) {
       state.energy = state.maxEnergy;
       state.lastEnergyUse = 0;
       saveState();
     }
   }
 }
+
 function updateUI() {
   checkEnergyRegen();
   document.getElementById('s-ads').textContent = state.adsWatched;
@@ -299,33 +335,25 @@ function showToast(msg, isError) {
   setTimeout(() => t.className = 'toast', 2500);
 }
 
-// ===== СЛУЧАЙНОЕ ВИДЕО + АВТО-РАЗМЕР =====
-async function getRandomAdWithSize() {
-  if (AD_FILES.length === 0) return null;
-  const file = AD_FILES[Math.floor(Math.random() * AD_FILES.length)];
-  const url = 'ads/' + file;
-  let size = 1000; // КБ по умолчанию, если не удалось узнать
-  try {
-    const res = await fetch(url, { method: 'HEAD', cache: 'no-store' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const len = res.headers.get('Content-Length');
-    if (len) size = Math.max(1, Math.round(parseInt(len) / 1024));
-  } catch (e) {
-    console.warn('Не удалось получить размер', file, e);
-  }
-  return { file, url, size };
+function getRandomAd() {
+  return AD_VIDEOS[Math.floor(Math.random() * AD_VIDEOS.length)];
 }
 
 // ===== ПРОСМОТР РЕКЛАМЫ =====
 async function watchAd() {
   if (watching) return;
-  if (state.energy <= 0) { showToast('Нет энергии! Восстановление через 2 часа.', true); return; }
-  if (AD_FILES.length === 0) { showToast('Нет видео в списке AD_FILES', true); return; }
+  if (AD_VIDEOS.length === 0) {
+    showToast('Видео не загружены', true);
+    return;
+  }
+  if (state.energy <= 0) {
+    showToast('Нет энергии! Восстановление через 2 часа.', true);
+    return;
+  }
 
   watching = true;
   document.getElementById('watchBtn').disabled = true;
 
-  // Списываем энергию
   state.energy--;
   if (state.lastEnergyUse === 0) state.lastEnergyUse = Date.now();
   updateUI();
@@ -334,75 +362,52 @@ async function watchAd() {
   const playerEl = document.getElementById('player');
   const progressEl = document.getElementById('progress');
 
-  // 1. Выбираем случайный ролик и узнаём его размер
-  statusEl.textContent = '🎲 Выбираю ролик...';
-  const ad = await getRandomAdWithSize();
-  if (!ad) {
-    statusEl.textContent = '⚠ Не удалось выбрать ролик';
-    watching = false;
-    document.getElementById('watchBtn').disabled = false;
-    return;
-  }
-
-  // 2. Считаем время загрузки (1 Мбит/с = 125 КБ/с)
+  const videoUrl = getRandomAd();
   const speedKbps = state.speed * 125;
-  const loadMs = Math.max(500, (ad.size / speedKbps) * 1000);
-  const loadSec = (loadMs / 1000).toFixed(1);
+  const fakeFileSize = 500 + Math.random() * 1500;
+  const totalLoad = Math.max(500, (fakeFileSize / speedKbps) * 1000);
 
-  statusEl.textContent =
-    `🌐 ${ad.file} (${ad.size} КБ) — загрузка ${loadSec} сек при ${state.speed} Мбит/с...`;
+  statusEl.textContent = `🌐 Загрузка: ${state.speed} Мбит/с (${speedKbps} КБ/с)...`;
   progressEl.style.width = '0%';
 
-  // 3. Фейковая загрузка
   const startTime = Date.now();
   await new Promise(resolve => {
     const interval = setInterval(() => {
-      const pct = Math.min(100, ((Date.now() - startTime) / loadMs) * 100);
+      const pct = Math.min(100, ((Date.now() - startTime) / totalLoad) * 100);
       progressEl.style.width = pct + '%';
       if (pct >= 100) { clearInterval(interval); resolve(); }
     }, 50);
   });
 
-  // 4. Воспроизведение
-  statusEl.textContent = `▶ Показ: ${ad.file}`;
-  playerEl.innerHTML = `<video id="adVideo" autoplay playsinline webkit-playsinline></video>`;
+  statusEl.textContent = '▶ Показ ролика...';
+
+  playerEl.innerHTML = `<video id="adVideo" autoplay playsinline></video>`;
   const vid = document.getElementById('adVideo');
-  vid.src = ad.url;
 
   await new Promise(resolve => {
-    let done = false;
-    const finish = () => { if (!done) { done = true; resolve(); } };
-
+    vid.src = videoUrl;
     vid.onloadedmetadata = () => {
       if (vid.duration > 15) vid.playbackRate = vid.duration / 15;
     };
-    vid.onended = finish;
+    vid.onended = resolve;
     vid.onerror = () => {
-      statusEl.textContent = `⚠ Видео ${ad.file} не найдено, имитация...`;
-      setTimeout(finish, 3000);
+      statusEl.textContent = '⚠ Видео не найдено, имитация показа...';
+      setTimeout(resolve, 3000);
     };
-    vid.play().catch(() => {
-      statusEl.textContent = '▶ Нажми на видео для запуска';
-      vid.onclick = () => vid.play();
-    });
-
-    // Страховка от зависания
-    setTimeout(finish, 60000);
+    setTimeout(() => { if (!vid.ended) resolve(); }, 30000);
   });
 
-  // 5. Награда
   const reward = +(0.1 + Math.random() * 0.2).toFixed(2);
   state.coins = +(state.coins + reward).toFixed(2);
   state.adsWatched++;
   updateUI();
 
   progressEl.style.width = '100%';
-  statusEl.textContent = `✅ +${reward.toFixed(2)} 🪙 (${ad.file}, ${ad.size} КБ)`;
+  statusEl.textContent = `✅ Просмотрено! Награда: +${reward.toFixed(2)} 🪙`;
   playerEl.innerHTML = `
     <div class="placeholder">
       <div class="big">🎉</div>
       <div>+${reward.toFixed(2)} 🪙</div>
-      <div style="font-size:11px;color:#666;margin-top:6px">${ad.file}</div>
     </div>`;
 
   watching = false;
@@ -442,33 +447,42 @@ function openWithdraw() {
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
 const SECRET_KEY = "ADTYCOON_2024_SECRET_X9Z";
+
 function xorCipher(str, key) {
   let out = '';
-  for (let i = 0; i < str.length; i++)
+  for (let i = 0; i < str.length; i++) {
     out += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+  }
   return out;
 }
+
 function generateWithdraw() {
   if (state.coins < 0.1) { showToast('Минимум для вывода: 0.10 🪙', true); return; }
+
   const payload = {
-    v: 1, coins: +state.coins.toFixed(2), ads: state.adsWatched,
-    speed: state.speed, ts: Date.now(),
+    v: 1,
+    coins: +state.coins.toFixed(2),
+    ads: state.adsWatched,
+    speed: state.speed,
+    ts: Date.now(),
     rnd: Math.random().toString(36).slice(2, 10)
   };
+
   const json = JSON.stringify(payload);
   const b64_1 = btoa(unescape(encodeURIComponent(json)));
   const xored = xorCipher(b64_1, SECRET_KEY);
   const b64_2 = btoa(unescape(encodeURIComponent(xored)));
   const mid = Math.ceil(b64_2.length / 2);
   const shuffled = b64_2.slice(mid) + b64_2.slice(0, mid);
-  document.getElementById('withdrawCode').value =
-    'ADT-' + btoa(unescape(encodeURIComponent(shuffled)));
-  showToast('Код создан!');
+  const finalCode = 'ADT-' + btoa(unescape(encodeURIComponent(shuffled)));
+
+  document.getElementById('withdrawCode').value = finalCode;
+  showToast('Код создан! Отправь его админу.');
 }
 
 // ===== СТАРТ =====
+loadVideoList();
 updateUI();
-document.getElementById('status').textContent = `Готово: ${AD_FILES.length} роликов в списке`;
 </script>
 </body>
 </html>
